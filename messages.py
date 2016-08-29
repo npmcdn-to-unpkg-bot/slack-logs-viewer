@@ -24,6 +24,8 @@ def messages_deco(func):
 class LogQuery:
     def __init__(self):  
         self._filters = {}
+        self._sort = None
+        self._limit = None
         self._neighbors = 0
 
     def search(self, text):
@@ -38,11 +40,26 @@ class LogQuery:
         else:
             raise Exception('param_or_dict must be string or dict')
 
+        return self
+
+    def asc(self):
+        self._sort = 1
+        return self
+
+    def desc(self):
+        self._sort = -1
+        return self
+
+    def limit(self, limit):
+        self._limit = limit
+        return self
+
     def channel(self, name):
         return self.filter('channel', name)
 
     def before_message(self, message_id):
         self._filters['_id'] = {'$lt': message_id}
+        return self
 
     def neighbors(self, num):
         self._neighbors = num
@@ -65,7 +82,11 @@ class LogQuery:
 
     def get(self):
         result = messageslist.find(self._filters)
-        if self.neighbors:
+        if self._sort is not None:
+            result = result.sort('$natural', self._sort)
+        if self._limit:
+            result = result.limit(self._limit)
+        if self._neighbors:
             result = self._add_neighbors(result)
         return result
 
@@ -82,8 +103,11 @@ class LogViewer:
         " first length messages from message_ts message "
         pass
     @messages_deco
-    def tail(self, channel, length=10):
-        return messageslist.find({'channel': channel}).sort('$natural', -1).limit(length)
+    def tail(self, channel, length=10, before_message=None):
+        ret = LogQuery().channel(channel)
+        if before_message:
+            ret = ret.before_message(before_message)
+        return ret.desc().limit(length).get()
 
 
 def mongo_to_messages(mongo_result):
