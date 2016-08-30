@@ -1,3 +1,8 @@
+var Router = ReactRouter.Router;
+var Route = ReactRouter.Route;
+var IndexRedirect = ReactRouter.IndexRedirect;
+var browserHistory = ReactRouter.browserHistory;
+
 var Message = React.createClass({
     rawMarkup: function() {
         return { __html: slackdown.parse(this.props.message.text) };
@@ -30,8 +35,9 @@ var MessageList = React.createClass({
 
 var MessageBox = React.createClass({
     loadMessages: function(before_message) {
+        var url = '/messages/' + this.props.params.channel;
         $.ajax({
-            url: this.props.url,
+            url: url,
             dataType: 'json',
             data: { before_message: before_message },
             success: function(data) {
@@ -58,6 +64,11 @@ var MessageBox = React.createClass({
 });
 
 ReactDOM.render(
-    <MessageBox url="/messages/" />,
+    <Router history={browserHistory}>
+        <Route path="/">
+            <IndexRedirect to="channel/general" />
+            <Route path="channel/:channel" component={MessageBox} />
+        </Route>
+    </Router>,
     document.getElementById('container')
 );

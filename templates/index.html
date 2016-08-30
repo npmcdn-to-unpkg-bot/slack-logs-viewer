@@ -8,22 +8,25 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/css/bootstrap.min.css" integrity="sha384-MIwDKRSSImVFAZCVLtU0LMDdON6KVCrZHyVQQj6e8wIEJkW4tvwqXrbMIya1vriY" crossorigin="anonymous">
-    <link rel="stylesheet" href="static/css/app.css">
+    <link rel="stylesheet" href="/static/css/app.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router/2.7.0/ReactRouter.js"></script>
     <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
-    <script src="static/js/vendor/slackdown.js"></script>
+    <script src="/static/js/vendor/slackdown.js"></script>
   </head>
   <body>
     <div class="container">
-        <div class="col-sm-3">
-            channels
+        <div class="col-sm-3 nav nav-pills nav-stacked">
+            {% for channel in ['general', 'bookcrossing', 'mipt_ya_ml_spec', 'random'] %}
+            <li class="nav-item"><a class="nav-link" href="/channel/{{ channel }}">#{{ channel }}</a></li>
+            {% endfor %}
         </div>
         <div class="col-sm-9" id="container">
         </div>
     </div>
-    <script type="text/babel" src="static/js/app.js"></script>
+    <script type="text/babel" src="/static/js/app.js"></script>
 
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
