@@ -1,10 +1,13 @@
 var Message = React.createClass({
+    rawMarkup: function() {
+        return { __html: slackdown.parse(this.props.message.text) };
+    },
     render: function () {
         return (
             <div className="message">
                 <img src={this.props.message.user.avatar} />
                 {this.props.message.ts}
-                <strong>{this.props.message.user.name}</strong>: {this.props.message.raw}
+                <strong>{this.props.message.user.name}</strong>: <span dangerouslySetInnerHTML={this.rawMarkup()} />
             </div>
         );
     }

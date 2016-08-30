@@ -9,3 +9,7 @@
 .load-more-button:hover {
     color: #888;
 }
+
+.slack-user {
+    color: blue;
+}
