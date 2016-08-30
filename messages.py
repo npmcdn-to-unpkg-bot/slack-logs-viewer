@@ -32,7 +32,6 @@ class LogQuery:
         self._filters = {'subtype': {'$exists': False}}
         self._sort = None
         self._limit = None
-        self._neighbors = 0
 
     def search(self, text):
         self._filters['$text'] = {'$search': text}
@@ -67,25 +66,6 @@ class LogQuery:
         self._filters['id'] = {'$lt': int(message_id)}
         return self
 
-    def neighbors(self, num):
-        self._neighbors = num
-        return self
-
-    def _add_neighbor(self, message_id):
-        count = self._neighbors
-        message_id = message_id
-        " get count messages before and above this message "
-        before = messageslist.find({'id':  {'$lt': message_id}}).sort([('id', -1)]).limit(count)
-        message = messageslist.find({'id': message_id})
-        after = messageslist.find({'id':  {'$gt': message_id}}).sort('id').limit(count)
-        return mongo_to_messages(before) + mongo_to_messages(message) +  mongo_to_messages(after)
-
-    def _add_neighbors(self, result):
-        ret = []
-        for r in result:
-            ret.append(self._add_neighbor(r['id']))
-        return ret
-
     def get(self):
         result = messageslist.find(self._filters)
         if self._sort is not None:
@@ -93,8 +73,6 @@ class LogQuery:
         if self._limit:
             result = result.limit(self._limit)
         result = sorted(result, key=lambda x: x['id'])
-        if self._neighbors:
-            result = self._add_neighbors(result)
         return result
 
 
@@ -112,3 +90,16 @@ class LogViewer:
         if before_message:
             ret = ret.before_message(before_message)
         return ret.desc().limit(length).get()
+
+
+def with_neighbors(message_list, count):
+    def add_neighbor(message_id):
+        message_id = message_id
+        " get count messages before and above this message "
+        before = messageslist.find({'id':  {'$lt': message_id}}).sort([('id', -1)]).limit(count)
+        message = messageslist.find({'id': message_id})
+        after = messageslist.find({'id':  {'$gt': message_id}}).sort('id').limit(count)
+        return mongo_to_messages(before) + mongo_to_messages(message) +  mongo_to_messages(after)
+
+    for r in message_list:
+        yield add_neighbor(r['id'])
