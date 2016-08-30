@@ -7,7 +7,6 @@ User = namedtuple('User', ['id', 'name', 'real_name', 'avatar'])
 
 def load_users(archive_location):
     users = json.load(open(os.path.join(archive_location, 'users.json')))
-    #return [User(id=u['id'], name=u['name'], real_name=u['real_name']) for u in users]
     users.append({'id': 'USLACKBOT', 'name': 'slackbot', 'real_name': '', 'avatar': ''})
     def avatar(u):
         if 'profile' in u:

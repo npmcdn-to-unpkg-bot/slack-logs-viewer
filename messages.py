@@ -15,7 +15,13 @@ db = MongoClient().slacklogs
 messageslist = db.messages
 
 
-def messages_deco(func):
+def mongo_to_messages(mongo_result):
+    def mtom(m):
+        return Message(id=m['id'], channel=m['channel'], ts=m['ts'], user=user_by_id(m['user']), raw=m['text'])
+    return map(mtom, mongo_result)
+
+
+def to_message_list(func):
     def inner(*args, **kwargs):
         return mongo_to_messages(func(*args, **kwargs))
     return inner
@@ -93,44 +99,16 @@ class LogQuery:
 
 
 class LogViewer:
-    @messages_deco
+    @to_message_list
     def search(self, text, channel=None, author=None, period=None):
         return LogQuery().search(text).get()
+
     def search_with_neighbors(self, text):
         return LogQuery().search(text).neighbors(3).get()
-    def by_period(self, period):
-        pass
-    def head(self, message_ts, length=100):
-        " first length messages from message_ts message "
-        pass
-    @messages_deco
+
+    @to_message_list
     def tail(self, channel, length=10, before_message=None):
         ret = LogQuery().channel(channel)
         if before_message:
             ret = ret.before_message(before_message)
         return ret.desc().limit(length).get()
-
-
-def mongo_to_messages(mongo_result):
-    def mtom(m):
-        return Message(id=m['id'], channel=m['channel'], ts=m['ts'], user=user_by_id(m['user']), raw=m['text'])
-    return map(mtom, mongo_result)
-
-
-if __name__ == '__main__':
-#    import_logs('/home/ether/sandbox/chat-analysis/ml2016/data')
-    lv = LogViewer()
-    # msgs = lv.tail('random')
-    #msgs = lv.neighbors('57c06ab13b80a11fbf25b46d')
-    """
-    msgs = lv.search('SLACKBOT')
-    for m in msgs:
-        print '%s [%s] %s: %s' % (m.id, m.ts, m.user.name, m.text)
-    """
-    msgs = lv.search_with_neighbors(u'видеоигры')
-    for g in msgs:
-        for m in g:
-            print '[%s] %s: %s' % (m.ts, m.user.name, m.text)
-        print('')
-
-    

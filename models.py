@@ -27,25 +27,3 @@ class Message(namedtuple('Message', ['id', 'channel', 'ts', 'user', 'raw'])):
         ret['text'] = self.prerender
         del ret['raw']
         return ret
-
-
-class MessagesEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime):
-            obj = str(obj)
-        else:
-            return obj.__dict__
-            #obj = super(MessagesEncoder, self).default(obj)
-        return obj
-
-    def encode(self, obj):
-        return super(MessagesEncoder, self).encode(obj)
-
-    def iterencode(self, obj, **kwargs):
-        if isinstance(obj, tuple) and hasattr(obj, '_fields'):
-            gen = self._iterencode_dict(obj.__dict__, markers)
-        else:
-            gen = super(MessagesEncoder, self).iterencode(obj, **kwargs)
-
-        for chunk in gen:
-            yield chunk
