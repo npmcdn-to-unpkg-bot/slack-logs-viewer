@@ -57,7 +57,7 @@ class LogQuery:
         return self.filter('channel', name)
 
     def before_message(self, message_id):
-        self._filters['id'] = {'$lt': message_id}
+        self._filters['id'] = {'$lt': int(message_id)}
         return self
 
     def neighbors(self, num):

@@ -1,0 +1,11 @@
+.load-more-button {
+    text-align: center;
+    margin: 6px;
+    cursor: pointer;
+    font-style: italic;
+    text-decoration: underline;
+}
+
+.load-more-button:hover {
+    color: #888;
+}

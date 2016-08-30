@@ -48,8 +48,7 @@ var MessageBox = React.createClass({
     },
     render: function () {
         return <div className="messageBox">
-            <h1>messages</h1>
-            <div onClick={this.handleLoadMore}>Load more</div>
+            <div className="load-more-button" onClick={this.handleLoadMore}>Load more</div>
             <MessageList data={this.state.data} />
         </div>
     }
