@@ -2,7 +2,6 @@ from flask import Flask, jsonify, render_template, request
 import flask.json
 
 from messages import LogViewer
-from models import MessagesEncoder
 
 
 app = Flask(__name__)
