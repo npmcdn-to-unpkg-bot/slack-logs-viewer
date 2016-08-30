@@ -23,7 +23,7 @@ def messages_deco(func):
 
 class LogQuery:
     def __init__(self):  
-        self._filters = {}
+        self._filters = {'subtype': {'$exists': False}}
         self._sort = None
         self._limit = None
         self._neighbors = 0
@@ -115,8 +115,6 @@ def mongo_to_messages(mongo_result):
     def mtom(m):
         return Message(id=m['id'], channel=m['channel'], ts=m['ts'], user=user_by_id(m['user']), raw=m['text'])
     return map(mtom, mongo_result)
-
-
 
 
 if __name__ == '__main__':
