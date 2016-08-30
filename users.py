@@ -10,7 +10,7 @@ def load_users(archive_location):
     users.append({'id': 'USLACKBOT', 'name': 'slackbot', 'real_name': '', 'avatar': ''})
     def avatar(u):
         if 'profile' in u:
-            avatar = u['profile']['image_24']
+            avatar = u['profile']['image_48']
         else:
             avatar = None
         return avatar

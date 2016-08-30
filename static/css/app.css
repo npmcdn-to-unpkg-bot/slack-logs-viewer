@@ -13,3 +13,28 @@
 .slack-user {
     color: blue;
 }
+
+.messageList .message {
+    margin: 4px 0;
+}
+
+.messageList .message .avatar {
+    float: left;
+    padding: 4px;
+}
+
+.messageList .message .avatar img {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: .2rem;
+}
+
+.messageList .message .content .header .username {
+    font-weight: bold;
+    margin-right: 2px;
+}
+
+.messageList .message .content .header .ts {
+    color: #ccc;
+    font-size: 0.75em;
+}

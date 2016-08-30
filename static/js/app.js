@@ -10,9 +10,16 @@ var Message = React.createClass({
     render: function () {
         return (
             <div className="message">
-                <img src={this.props.message.user.avatar} />
-                {this.props.message.ts}
-                <strong>{this.props.message.user.name}</strong>: <span dangerouslySetInnerHTML={this.rawMarkup()} />
+                <div className="avatar">
+                    <img src={this.props.message.user.avatar} />
+                </div>
+                <div className="content">
+                    <div className="header">
+                        <span className="username">{this.props.message.user.name}</span>
+                        <span className="ts">{this.props.message.ts}</span>
+                    </div>
+                    <div className="text" dangerouslySetInnerHTML={this.rawMarkup()} />
+                </div>
             </div>
         );
     }

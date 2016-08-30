@@ -12,12 +12,12 @@
   </head>
   <body>
     <div class="container">
-        <div class="col-sm-3 nav nav-pills nav-stacked">
+        <div class="col-sm-2 nav nav-pills nav-stacked">
             {% for channel in ['general', 'bookcrossing', 'mipt_ya_ml_spec', 'random'] %}
             <li class="nav-item"><a class="nav-link" href="/channel/{{ channel }}">#{{ channel }}</a></li>
             {% endfor %}
         </div>
-        <div class="col-sm-9" id="container">
+        <div class="col-sm-10" id="container">
         </div>
     </div>
 
