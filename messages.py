@@ -6,7 +6,6 @@ from datetime import datetime
 from collections import namedtuple
 
 from pymongo import MongoClient
-from bson.objectid import ObjectId
 
 from models import Message, User
 
@@ -58,7 +57,7 @@ class LogQuery:
         return self.filter('channel', name)
 
     def before_message(self, message_id):
-        self._filters['_id'] = {'$lt': message_id}
+        self._filters['id'] = {'$lt': message_id}
         return self
 
     def neighbors(self, num):
@@ -67,25 +66,26 @@ class LogQuery:
 
     def _add_neighbor(self, message_id):
         count = self._neighbors
-        message_id = ObjectId(message_id)
+        message_id = message_id
         " get count messages before and above this message "
-        before = messageslist.find({'_id':  {'$lt': message_id}}).sort([('_id', -1)]).limit(count)
-        message = messageslist.find({'_id': message_id})
-        after = messageslist.find({'_id':  {'$gt': message_id}}).sort('_id').limit(count)
+        before = messageslist.find({'id':  {'$lt': message_id}}).sort([('id', -1)]).limit(count)
+        message = messageslist.find({'id': message_id})
+        after = messageslist.find({'id':  {'$gt': message_id}}).sort('id').limit(count)
         return mongo_to_messages(before) + mongo_to_messages(message) +  mongo_to_messages(after)
 
     def _add_neighbors(self, result):
         ret = []
         for r in result:
-            ret.append(self._add_neighbor(r['_id']))
+            ret.append(self._add_neighbor(r['id']))
         return ret
 
     def get(self):
         result = messageslist.find(self._filters)
         if self._sort is not None:
-            result = result.sort('$natural', self._sort)
+            result = result.sort('id', self._sort)
         if self._limit:
             result = result.limit(self._limit)
+        result = sorted(result, key=lambda x: x['id'])
         if self._neighbors:
             result = self._add_neighbors(result)
         return result
@@ -112,7 +112,7 @@ class LogViewer:
 
 def mongo_to_messages(mongo_result):
     def mtom(m):
-        return Message(id=str(m['_id']), channel=m['channel'], ts=m['ts'], user=user_by_id(m['user']), raw=m['text'])
+        return Message(id=m['id'], channel=m['channel'], ts=m['ts'], user=user_by_id(m['user']), raw=m['text'])
     return map(mtom, mongo_result)
 
 

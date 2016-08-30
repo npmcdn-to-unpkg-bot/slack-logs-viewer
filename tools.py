@@ -7,6 +7,7 @@ from pymongo import MongoClient
 # TODO: .zip support
 
 def prepare_message(message, channel):
+    message['id'] = int(message['ts'].replace('.', ''))
     message['ts'] = datetime.fromtimestamp(float(message['ts']))
     message['channel'] = channel
     return message

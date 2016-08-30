@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 import flask.json
 
 from messages import LogViewer
@@ -16,9 +16,8 @@ def index():
 # /messages/<channel>/tail/100/before/123098120312.234
 @app.route('/messages/')
 def channel():
-    import json
-    from models import MessagesEncoder
-    return flask.jsonify([m.to_json() for m in LogViewer().tail('random', 100)])
+    before_message = request.args.get('before_message')
+    return flask.jsonify([m.to_json() for m in LogViewer().tail('random', 100, before_message)])
 
 
 if __name__ == '__main__':
